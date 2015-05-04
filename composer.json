@@ -1,0 +1,26 @@
+{
+  "name":        "reclickd/reclickd-api",
+  "description": "Native PHP wrapper for the ReClickd REST API",
+  "type":        "library",
+  "keywords":    ["reclickd", "rest", "api"],
+  "homepage":    "https://github.com/reclickd/reclickd-api",
+  "license":     "MIT",
+  "authors":     [
+    {
+      "name":     "ReClickd",
+      "homepage": "https://github.com/reclickd"
+    },
+    {
+      "name":     "Ainsley",
+      "homepage": "http://ains.ly"
+    }
+  ],
+  "autoload":    {
+    "psr-4": {
+      "ReClickdAPI\\": "src/"
+    }
+  },
+  "require":     {
+    "guzzlehttp/guzzle": "*"
+  }
+}
