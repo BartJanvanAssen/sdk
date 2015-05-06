@@ -101,7 +101,7 @@ class Client
   /**
    * Creates a User
    *
-   * @param string $name
+   * @param string $fullName
    * @param string $email
    * @param string|null $apiKey
    *
@@ -114,13 +114,13 @@ class Client
    * @returns \ReClickdAPI\Responses\UserResponse
    */
   public static function createUser(
-    $name,
+    $fullName,
     $email,
     $apiKey = null
   )
   {
     $post = [
-      'name' => $name,
+      'fullName' => $fullName,
       'email' => $email
     ];
 
