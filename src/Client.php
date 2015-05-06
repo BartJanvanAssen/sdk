@@ -2,12 +2,13 @@
 
 namespace ReClickdAPI;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Post\PostBody;
-use Phalcon\DI;
-use GuzzleHttp\Message\Request;
 use GuzzleHttp\Client as GuzzleClient;
 use ReClickdAPI\Exceptions\BadRequestException;
+use ReClickdAPI\Exceptions\InternalServerException;
 use ReClickdAPI\Request\RequestMethods;
+use ReClickdAPI\Responses\UserResponse;
 
 /**
  * Native PHP Wrapper for the ReClickd API
@@ -24,10 +25,10 @@ class Client
   /**
    * @var string The base URL for the ReClickd API.
    */
-  public static $apiBase = 'https://api.reclickd.com';
+  public static $apiBase = 'http://api.reclickd.dev';
 
-  /** @var string */
-  public $url;
+  // Endpoints
+  const ENDPOINT_USER = '/v1/users/';
 
   public function __construct($apiKey = null)
   {
@@ -40,110 +41,107 @@ class Client
   /**
    * @param string $apiKey
    */
-  public static function setApiKey($apiKey)
+  public function setApiKey($apiKey)
   {
     self::$apiKey = $apiKey;
   }
 
   /**
-   * @return Client
+   * Gets a User by ID
+   *
+   * @param int $id
+   * @param string|null $apiKey
+   *
+   * @throws \ReClickdAPI\Exceptions\BadRequestException
+   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
+   * @throws \ReClickdAPI\Exceptions\InternalServerException
    * @throws \Exception
+   *
+   * @returns \ReClickdAPI\Responses\UserResponse
    */
-  public static function getInstance()
+  public static function getUser($id, $apiKey = null)
   {
-    static $instance;
+    $response = self::getResponse(RequestMethods::METHOD_GET, self::ENDPOINT_USER.$id, [], $apiKey);
 
-    if (!isset($instance))
+    return new UserResponse($response);
+  }
+
+  /**
+   * Lists all Users belonging to ReClickd Partner
+   *
+   * Returns an array of User objects with User ID as key
+   *
+   * @param string|null $apiKey
+   *
+   * @throws \ReClickdAPI\Exceptions\BadRequestException
+   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
+   * @throws \ReClickdAPI\Exceptions\InternalServerException
+   * @throws \Exception
+   *
+   * @returns \ReClickdAPI\Responses\UserResponse[]
+   */
+  public static function listUsers($apiKey = null)
+  {
+    $response = self::getResponse(RequestMethods::METHOD_GET, self::ENDPOINT_USER, [], $apiKey);
+
+    $users = [];
+    foreach ($response as $user)
     {
-      $instance = new self;
+      $users[$user->id] = new UserResponse($user);
     }
 
-    return $instance;
+    return $users;
   }
 
   /**
-   * Makes a GET call to API endpoint
+   * Creates a User
    *
-   * @param string $path
-   * @param array|null $params
-   * @param string|null $apiKey
-   *
-   * @return \stdClass
-   */
-  public static function get($path, $params = [], $apiKey = null)
-  {
-    return self::getResponse(RequestMethods::METHOD_GET, $path, $params, $apiKey);
-  }
-
-  /**
-   * Makes a POST call to API endpoint
-   *
-   * @param string $path
-   * @param array|null $params
+   * @param int $name
+   * @param string $email
    * @param string|null $apiKey
    *
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
+   * @throws \ReClickdAPI\Exceptions\InternalServerException
    * @throws \Exception
    *
-   * @return \stdClass
+   * @returns \ReClickdAPI\Responses\UserResponse
    */
-  public static function post($path, $params = [], $apiKey = null)
+  public static function createUser(
+    $name,
+    $email,
+    $apiKey = null
+  )
   {
-    return self::getResponse(RequestMethods::METHOD_POST, $path, $params, $apiKey);
+    $post = [
+      'name' => $name,
+      'email' => $email
+    ];
+
+    $response = self::getResponse(RequestMethods::METHOD_POST, self::ENDPOINT_USER, $post, $apiKey);
+
+    return new UserResponse($response);
   }
 
   /**
-   * Makes a PUT call to API endpoint
+   * Updates a User
    *
-   * @param string $path
-   * @param array|null $params
+   * @param int $id
+   * @param array $params
    * @param string|null $apiKey
    *
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
+   * @throws \ReClickdAPI\Exceptions\InternalServerException
    * @throws \Exception
    *
-   * @return \stdClass
+   * @returns \ReClickdAPI\Responses\UserResponse
    */
-  public static function put($path, $params = [], $apiKey = null)
+  public static function updateUser($id, $params, $apiKey = null)
   {
-    return self::getResponse(RequestMethods::METHOD_PUT, $path, $params, $apiKey);
-  }
+    $response = self::getResponse(RequestMethods::METHOD_PUT, self::ENDPOINT_USER.$id, $params, $apiKey);
 
-  /**
-   * Makes a PATCH call to API endpoint
-   *
-   * @param string $path
-   * @param array|null $params
-   * @param string|null $apiKey
-   *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \Exception
-   *
-   * @return \stdClass
-   */
-  public static function patch($path, $params = [], $apiKey = null)
-  {
-    return self::getResponse(RequestMethods::METHOD_PATCH, $path, $params, $apiKey);
-  }
-
-  /**
-   * Makes a DELETE call to API endpoint
-   *
-   * @param string $path
-   * @param array|null $params
-   *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \Exception
-   *
-   * @return \stdClass
-   */
-  public static function delete($path, $params = null)
-  {
-    return self::getResponse(RequestMethods::METHOD_DELETE, $path, $params);
+    return new UserResponse($response);
   }
 
   /**
@@ -156,23 +154,17 @@ class Client
    *
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
+   * @throws \ReClickdAPI\Exceptions\InternalServerException
    * @throws \Exception
    *
-   *
-   * @return \stdClass
+   * @return mixed
    */
-  private function getResponse(
-      $method,
-      $path,
-      $params = [],
-      $apiKey = null
+  private static function getResponse(
+    $method,
+    $path,
+    $params = [],
+    $apiKey = null
   ) {
-    $client = new GuzzleClient(
-      [
-        'base_url' => self::$apiBase
-      ]
-    );
-
     if ($params && !is_array($params))
     {
       throw new BadRequestException('Invalid parameters provided');
@@ -190,8 +182,26 @@ class Client
       $apiKey = self::$apiKey;
     }
 
-    $body = $query = null;
-    if ($this->methodHasBody($method))
+    $client = new GuzzleClient(
+      [
+        'base_url' => self::$apiBase,
+        'defaults' => [
+          'headers' => self::getAuthHeader($apiKey)
+        ]
+      ]
+    );
+
+    $request = $client->createRequest(
+      $method,
+      $path
+    );
+
+    if (!$params)
+    {
+      $params = [];
+    }
+
+    if (self::methodHasBody($method))
     {
       $body = new PostBody();
 
@@ -199,44 +209,37 @@ class Client
       {
         $body->setField($field, $value);
       }
+
+      $request->setBody($body);
     }
     else
     {
-      $query = $params;
-    }
-
-    $headers = $this->getAuthHeader($apiKey);
-
-    // Prepare the request
-    $request = new Request(
-      $method,
-      sprintf(
-        '%s/%s',
-        self::$apiBase,
-        ltrim('/', $path)
-      ),
-      $headers,
-      $body,
-      []
-    );
-
-    if ($query)
-    {
-      $request->setQuery($query);
+      $request->setQuery($params);
     }
 
     // Get response
-    $response = $client->send($request);
-    $body = json_decode($response->getBody());
+    try
+    {
+      $response = $client->send($request);
 
-    if (isset($body->data))
-    {
-      return $body->data;
+      $body = json_decode($response->getBody());
+
+      if (isset($body->data))
+      {
+        if ($body->messages == 'error')
+        {
+          throw new \Exception($body->data->error_message, $body->data->error_code);
+        }
+
+        return $body->data;
+      }
     }
-    else
+    catch (ClientException $e)
     {
-      throw new \Exception('Error calling ' . $method . ' to: ' . $path);
+      throw new InternalServerException($e->getMessage());
     }
+
+    throw new \Exception('Error calling ' . $method . ' to: ' . $path);
   }
 
   /**
@@ -246,12 +249,14 @@ class Client
    *
    * @returns string[]
    */
-  public function getAuthHeader($apiKey)
+  private static function getAuthHeader($apiKey)
   {
-    return [sprintf('Bearer %s', $apiKey)];
+    return [
+      'Authorization' => sprintf('Bearer %s', $apiKey)
+    ];
   }
 
-  private function methodHasBody($method)
+  private static function methodHasBody($method)
   {
     switch ($method)
     {
