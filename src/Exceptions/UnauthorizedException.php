@@ -2,7 +2,7 @@
 
 namespace ReClickdAPI\Exceptions;
 
-class UnauthorizedException extends \Exception
+class UnauthorizedException extends ReClickdException
 {
   protected $code = 401;
 

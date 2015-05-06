@@ -2,7 +2,7 @@
 
 namespace ReClickdAPI\Exceptions;
 
-class BadRequestException extends \Exception
+class BadRequestException extends ReClickdException
 {
   protected $code = 400;
 

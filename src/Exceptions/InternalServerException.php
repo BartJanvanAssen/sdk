@@ -2,11 +2,11 @@
 
 namespace ReClickdAPI\Exceptions;
 
-class InternalServerException extends \Exception
+class InternalServerException extends ReClickdException
 {
   protected $code = 502;
 
-  protected $message = 'You must supply a valid access token to use this resource';
+  protected $message = 'Internal Server Error';
 
   public function __construct($message = null)
   {

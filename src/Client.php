@@ -7,7 +7,9 @@ use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Client as GuzzleClient;
 use ReClickdAPI\Exceptions\BadRequestException;
 use ReClickdAPI\Exceptions\InternalServerException;
+use ReClickdAPI\Exceptions\NotFoundException;
 use ReClickdAPI\Exceptions\ReClickdException;
+use ReClickdAPI\Exceptions\UnauthorizedException;
 use ReClickdAPI\Request\RequestMethods;
 use ReClickdAPI\Responses\UserResponse;
 
@@ -234,7 +236,7 @@ class Client
       {
         if ($body->messages == 'error')
         {
-          throw new ReClickdException($body->data->error_message, $body->data->error_code);
+          self::handleResponseError($body);
         }
 
         return $body->data;
@@ -246,6 +248,28 @@ class Client
     }
 
     throw new \Exception('Error calling ' . $method . ' to: ' . $path);
+  }
+
+  public static function handleResponseError(\stdClass $response)
+  {
+    if ($response->data->error_code == 400)
+    {
+      throw new BadRequestException($response->data->error_message);
+    }
+    elseif ($response->data->error_code == 401)
+    {
+      throw new UnauthorizedException($response->data->error_message);
+    }
+    elseif ($response->data->error_code == 404)
+    {
+      throw new NotFoundException($response->data->error_message);
+    }
+    elseif ($response->data->error_code == 502)
+    {
+      throw new InternalServerException($response->data->error_message);
+    }
+
+    throw new ReClickdException($response->data->error_message, $response->data->error_code);
   }
 
   /**
