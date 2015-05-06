@@ -7,6 +7,7 @@ use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Client as GuzzleClient;
 use ReClickdAPI\Exceptions\BadRequestException;
 use ReClickdAPI\Exceptions\InternalServerException;
+use ReClickdAPI\Exceptions\ReClickdException;
 use ReClickdAPI\Request\RequestMethods;
 use ReClickdAPI\Responses\UserResponse;
 
@@ -25,7 +26,7 @@ class Client
   /**
    * @var string The base URL for the ReClickd API.
    */
-  public static $apiBase = 'http://api.reclickd.dev';
+  public static $apiBase = 'https://api.reclickd.com';
 
   // Endpoints
   const ENDPOINT_USER = '/v1/users/';
@@ -55,6 +56,7 @@ class Client
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
    * @throws \ReClickdAPI\Exceptions\InternalServerException
+   * @throws \ReClickdAPI\Exceptions\ReClickdException
    * @throws \Exception
    *
    * @returns \ReClickdAPI\Responses\UserResponse
@@ -76,6 +78,7 @@ class Client
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
    * @throws \ReClickdAPI\Exceptions\InternalServerException
+   * @throws \ReClickdAPI\Exceptions\ReClickdException
    * @throws \Exception
    *
    * @returns \ReClickdAPI\Responses\UserResponse[]
@@ -96,13 +99,14 @@ class Client
   /**
    * Creates a User
    *
-   * @param int $name
+   * @param string $name
    * @param string $email
    * @param string|null $apiKey
    *
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
    * @throws \ReClickdAPI\Exceptions\InternalServerException
+   * @throws \ReClickdAPI\Exceptions\ReClickdException
    * @throws \Exception
    *
    * @returns \ReClickdAPI\Responses\UserResponse
@@ -133,13 +137,14 @@ class Client
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
    * @throws \ReClickdAPI\Exceptions\InternalServerException
+   * @throws \ReClickdAPI\Exceptions\ReClickdException
    * @throws \Exception
    *
    * @returns \ReClickdAPI\Responses\UserResponse
    */
   public static function updateUser($id, $params, $apiKey = null)
   {
-    $response = self::getResponse(RequestMethods::METHOD_PUT, self::ENDPOINT_USER.$id, $params, $apiKey);
+    $response = self::getResponse(RequestMethods::METHOD_PATCH, self::ENDPOINT_USER.$id, $params, $apiKey);
 
     return new UserResponse($response);
   }
@@ -155,6 +160,7 @@ class Client
    * @throws \ReClickdAPI\Exceptions\BadRequestException
    * @throws \ReClickdAPI\Exceptions\UnauthorizedException
    * @throws \ReClickdAPI\Exceptions\InternalServerException
+   * @throws \ReClickdAPI\Exceptions\ReClickdException
    * @throws \Exception
    *
    * @return mixed
@@ -228,7 +234,7 @@ class Client
       {
         if ($body->messages == 'error')
         {
-          throw new \Exception($body->data->error_message, $body->data->error_code);
+          throw new ReClickdException($body->data->error_message, $body->data->error_code);
         }
 
         return $body->data;
@@ -265,7 +271,6 @@ class Client
         break;
 
       case RequestMethods::METHOD_POST:
-      case RequestMethods::METHOD_PATCH:
       case RequestMethods::METHOD_PUT:
       case RequestMethods::METHOD_DELETE:
         return true;
