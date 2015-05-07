@@ -10,7 +10,6 @@ use ReClickdAPI\Exceptions\InternalServerException;
 use ReClickdAPI\Exceptions\NotFoundException;
 use ReClickdAPI\Exceptions\ReClickdException;
 use ReClickdAPI\Exceptions\UnauthorizedException;
-use ReClickdAPI\Request\RequestMethods;
 use ReClickdAPI\Responses\UserResponse;
 
 /**
@@ -32,6 +31,15 @@ class Client
 
   // Endpoints
   const ENDPOINT_USER = '/v1/users/';
+
+  // Request Methods
+  const METHOD_OPTIONS = 'OPTIONS';
+  const METHOD_POST = 'POST';
+  const METHOD_HEAD = 'HEAD';
+  const METHOD_GET = 'GET';
+  const METHOD_PUT = 'PUT';
+  const METHOD_PATCH = 'PATCH';
+  const METHOD_DELETE = 'DELETE';
 
   public function __construct($apiKey = null)
   {
@@ -65,7 +73,7 @@ class Client
    */
   public static function getUser($id, $apiKey = null)
   {
-    $response = self::getResponse(RequestMethods::METHOD_GET, self::ENDPOINT_USER.$id, [], $apiKey);
+    $response = self::getResponse(self::METHOD_GET, self::ENDPOINT_USER.$id, [], $apiKey);
 
     return new UserResponse($response);
   }
@@ -87,7 +95,7 @@ class Client
    */
   public static function listUsers($apiKey = null)
   {
-    $response = self::getResponse(RequestMethods::METHOD_GET, self::ENDPOINT_USER, [], $apiKey);
+    $response = self::getResponse(self::METHOD_GET, self::ENDPOINT_USER, [], $apiKey);
 
     $users = [];
     foreach ($response as $user)
@@ -124,7 +132,7 @@ class Client
       'email' => $email
     ];
 
-    $response = self::getResponse(RequestMethods::METHOD_POST, self::ENDPOINT_USER, $post, $apiKey);
+    $response = self::getResponse(self::METHOD_POST, self::ENDPOINT_USER, $post, $apiKey);
 
     return new UserResponse($response);
   }
@@ -146,7 +154,7 @@ class Client
    */
   public static function updateUser($id, $params, $apiKey = null)
   {
-    $response = self::getResponse(RequestMethods::METHOD_PATCH, self::ENDPOINT_USER.$id, $params, $apiKey);
+    $response = self::getResponse(self::METHOD_PATCH, self::ENDPOINT_USER.$id, $params, $apiKey);
 
     return new UserResponse($response);
   }
@@ -178,6 +186,8 @@ class Client
       throw new BadRequestException('Invalid parameters provided');
     }
 
+    $params = $params ?: [];
+
     if (!$apiKey)
     {
       if (!isset(self::$apiKey))
@@ -203,11 +213,6 @@ class Client
       $method,
       $path
     );
-
-    if (!$params)
-    {
-      $params = [];
-    }
 
     if (self::methodHasBody($method))
     {
@@ -294,9 +299,9 @@ class Client
         return false;
         break;
 
-      case RequestMethods::METHOD_POST:
-      case RequestMethods::METHOD_PUT:
-      case RequestMethods::METHOD_DELETE:
+      case self::METHOD_POST:
+      case self::METHOD_PUT:
+      case self::METHOD_DELETE:
         return true;
         break;
     }
