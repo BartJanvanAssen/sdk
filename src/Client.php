@@ -52,9 +52,17 @@ class Client
   /**
    * @param string $apiKey
    */
-  public function setApiKey($apiKey)
+  public static function setApiKey($apiKey)
   {
     self::$apiKey = $apiKey;
+  }
+
+  /**
+   * @returns string $apiKey
+   */
+  public static function getApiKey()
+  {
+    return self::$apiKey;
   }
 
   /**
