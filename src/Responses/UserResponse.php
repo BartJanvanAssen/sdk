@@ -61,6 +61,18 @@ class UserResponse
     }
   }
 
+  public function toArray()
+  {
+    return [
+      'id' => $this->id,
+      'fullName' => $this->fullName,
+      'email' => $this->email,
+      'statuc' => $this->status,
+      'created' => $this->created,
+      'autoLoginUrl' => $this->autoLoginUrl
+    ];
+  }
+
   /**
    * Get the User ID
    * @return int
