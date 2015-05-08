@@ -295,7 +295,7 @@ class Client
   private static function getAuthHeader($apiKey)
   {
     return [
-      'Authorization' => sprintf('Bearer %s', $apiKey)
+      'AUTHORIZATION' => sprintf('Bearer %s', $apiKey)
     ];
   }
 
