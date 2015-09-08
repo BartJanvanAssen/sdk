@@ -1,8 +1,8 @@
 <?php
 
-namespace ReClickdAPI\Exceptions;
+namespace UpliftSocial\SDK\Exceptions;
 
-class NotFoundException extends ReClickdException
+class NotFoundException extends UpliftSocialException
 {
   protected $code = 404;
 
@@ -10,6 +10,6 @@ class NotFoundException extends ReClickdException
 
   public function __construct($message = null)
   {
-    $this->message = $message;
+    parent::__construct($message);
   }
 }

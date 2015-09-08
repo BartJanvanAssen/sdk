@@ -1,8 +1,8 @@
 <?php
 
-namespace ReClickdAPI\Exceptions;
+namespace UpliftSocial\SDK\Exceptions;
 
-class BadRequestException extends ReClickdException
+class BadRequestException extends UpliftSocialException
 {
   protected $code = 400;
 
@@ -10,6 +10,6 @@ class BadRequestException extends ReClickdException
 
   public function __construct($message = null)
   {
-    $this->message = $message;
+    parent::__construct($message);
   }
 }

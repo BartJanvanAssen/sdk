@@ -1,10 +1,10 @@
-ReClickd API
+Uplift Social SDK
 ===============
 
-Native PHP wrapper for the ReClickd API
+Native PHP wrapper for the Uplift Social API
 
 
 Installation
 ------------
-Include via composer "reclickd/reclickd-api": "dev-master"
+Include via composer "uplift-social/sdk": "dev-master"
 

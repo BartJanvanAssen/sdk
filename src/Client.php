@@ -1,33 +1,36 @@
 <?php
 
-namespace ReClickdAPI;
+namespace UpliftSocial\SDK;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Client as GuzzleClient;
-use ReClickdAPI\Exceptions\BadRequestException;
-use ReClickdAPI\Exceptions\InternalServerException;
-use ReClickdAPI\Exceptions\NotFoundException;
-use ReClickdAPI\Exceptions\ReClickdException;
-use ReClickdAPI\Exceptions\UnauthorizedException;
-use ReClickdAPI\Responses\UserResponse;
+use UpliftSocial\SDK\Exceptions\BadRequestException;
+use UpliftSocial\SDK\Exceptions\InternalServerException;
+use UpliftSocial\SDK\Exceptions\NotFoundException;
+use UpliftSocial\SDK\Exceptions\UpliftSocialException;
+use UpliftSocial\SDK\Exceptions\UnauthorizedException;
+use UpliftSocial\SDK\Responses\UserResponse;
 
 /**
- * Native PHP Wrapper for the ReClickd API
+ * Native PHP Wrapper for the Uplift Social API
  *
  * This class can be used as a standalone client for HTTP based requests
  */
 class Client
 {
   /**
-   * @var string The ReClickd API key to be used for requests.
+   * @var string The Uplift Social API key to be used for requests.
    */
   public static $apiKey;
 
   /**
-   * @var string The base URL for the ReClickd API.
+   * @var string The base URL for the Uplift Social API.
    */
-  public static $apiBase = 'https://api.reclickd.com';
+  public static $apiBase = 'https://api.uplift.social';
+
+  const ENV_PROD = 'prod';
+  const ENV_QA = 'qa';
 
   // Endpoints
   const ENDPOINT_USER = '/v1/users/';
@@ -66,18 +69,33 @@ class Client
   }
 
   /**
+   * @param string $env
+   */
+  public static function setEnvironment($env = self::ENV_PROD)
+  {
+    if ($env === self::ENV_QA)
+    {
+      static::$apiBase = 'http://api.delivrd.co';
+    }
+    else
+    {
+      static::$apiBase = 'https://api.uplift.social';
+    }
+  }
+
+  /**
    * Gets a User by ID
    *
    * @param int $id
    * @param string|null $apiKey
    *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \ReClickdAPI\Exceptions\InternalServerException
-   * @throws \ReClickdAPI\Exceptions\ReClickdException
+   * @throws \UpliftSocial\SDK\Exceptions\BadRequestException
+   * @throws \UpliftSocial\SDK\Exceptions\UnauthorizedException
+   * @throws \UpliftSocial\SDK\Exceptions\InternalServerException
+   * @throws \UpliftSocial\SDK\Exceptions\UpliftSocialException
    * @throws \Exception
    *
-   * @returns \ReClickdAPI\Responses\UserResponse
+   * @returns \UpliftSocial\SDK\Responses\UserResponse
    */
   public static function getUser($id, $apiKey = null)
   {
@@ -87,19 +105,19 @@ class Client
   }
 
   /**
-   * Lists all Users belonging to ReClickd Partner
+   * Lists all Users belonging to Uplift Social Partner
    *
    * Returns an array of User objects with User ID as key
    *
    * @param string|null $apiKey
    *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \ReClickdAPI\Exceptions\InternalServerException
-   * @throws \ReClickdAPI\Exceptions\ReClickdException
+   * @throws \UpliftSocial\SDK\Exceptions\BadRequestException
+   * @throws \UpliftSocial\SDK\Exceptions\UnauthorizedException
+   * @throws \UpliftSocial\SDK\Exceptions\InternalServerException
+   * @throws \UpliftSocial\SDK\Exceptions\UpliftSocialException
    * @throws \Exception
    *
-   * @returns \ReClickdAPI\Responses\UserResponse[]
+   * @returns \UpliftSocial\SDK\Responses\UserResponse[]
    */
   public static function listUsers($apiKey = null)
   {
@@ -121,13 +139,13 @@ class Client
    * @param string $email
    * @param string|null $apiKey
    *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \ReClickdAPI\Exceptions\InternalServerException
-   * @throws \ReClickdAPI\Exceptions\ReClickdException
+   * @throws \UpliftSocial\SDK\Exceptions\BadRequestException
+   * @throws \UpliftSocial\SDK\Exceptions\UnauthorizedException
+   * @throws \UpliftSocial\SDK\Exceptions\InternalServerException
+   * @throws \UpliftSocial\SDK\Exceptions\UpliftSocialException
    * @throws \Exception
    *
-   * @returns \ReClickdAPI\Responses\UserResponse
+   * @returns \UpliftSocial\SDK\Responses\UserResponse
    */
   public static function createUser(
     $fullName,
@@ -152,13 +170,13 @@ class Client
    * @param array $params
    * @param string|null $apiKey
    *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \ReClickdAPI\Exceptions\InternalServerException
-   * @throws \ReClickdAPI\Exceptions\ReClickdException
+   * @throws \UpliftSocial\SDK\Exceptions\BadRequestException
+   * @throws \UpliftSocial\SDK\Exceptions\UnauthorizedException
+   * @throws \UpliftSocial\SDK\Exceptions\InternalServerException
+   * @throws \UpliftSocial\SDK\Exceptions\UpliftSocialException
    * @throws \Exception
    *
-   * @returns \ReClickdAPI\Responses\UserResponse
+   * @returns \UpliftSocial\SDK\Responses\UserResponse
    */
   public static function updateUser($id, $params, $apiKey = null)
   {
@@ -175,10 +193,10 @@ class Client
    * @param array|null $params
    * @param string|null $apiKey
    *
-   * @throws \ReClickdAPI\Exceptions\BadRequestException
-   * @throws \ReClickdAPI\Exceptions\UnauthorizedException
-   * @throws \ReClickdAPI\Exceptions\InternalServerException
-   * @throws \ReClickdAPI\Exceptions\ReClickdException
+   * @throws \UpliftSocial\SDK\Exceptions\BadRequestException
+   * @throws \UpliftSocial\SDK\Exceptions\UnauthorizedException
+   * @throws \UpliftSocial\SDK\Exceptions\InternalServerException
+   * @throws \UpliftSocial\SDK\Exceptions\UpliftSocialException
    * @throws \Exception
    *
    * @return mixed
@@ -282,7 +300,7 @@ class Client
       throw new InternalServerException($response->data->error_message);
     }
 
-    throw new ReClickdException($response->data->error_message, $response->data->error_code);
+    throw new UpliftSocialException($response->data->error_message, $response->data->error_code);
   }
 
   /**

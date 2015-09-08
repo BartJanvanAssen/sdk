@@ -1,14 +1,14 @@
 {
-  "name":        "reclickd/reclickd-api",
-  "description": "Native PHP wrapper for the ReClickd REST API",
+  "name":        "uplift-social/sdk",
+  "description": "Native PHP wrapper for the Uplift Social REST API",
   "type":        "library",
-  "keywords":    ["reclickd", "rest", "api"],
-  "homepage":    "https://github.com/reclickd/reclickd-api",
+  "keywords":    ["uplift", "social", "rest", "api"],
+  "homepage":    "https://github.com/uplift-social/sdk",
   "license":     "MIT",
   "authors":     [
     {
-      "name":     "ReClickd",
-      "homepage": "https://github.com/reclickd"
+      "name":     "Uplift Social",
+      "homepage": "https://github.com/uplift-social"
     },
     {
       "name":     "Ainsley",
@@ -17,10 +17,10 @@
   ],
   "autoload":    {
     "psr-4": {
-      "ReClickdAPI\\": "src/"
+      "UpliftSocial\\SDK\\": "src/"
     }
   },
   "require":     {
-    "guzzlehttp/guzzle": ">=4.1.8"
+    "guzzlehttp/guzzle": "5.2.0"
   }
 }

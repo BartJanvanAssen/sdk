@@ -1,6 +1,6 @@
 <?php
 
-namespace ReClickdAPI\Responses;
+namespace UpliftSocial\SDK\Responses;
 
 class UserResponse
 {

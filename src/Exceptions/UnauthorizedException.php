@@ -1,8 +1,8 @@
 <?php
 
-namespace ReClickdAPI\Exceptions;
+namespace UpliftSocial\SDK\Exceptions;
 
-class UnauthorizedException extends ReClickdException
+class UnauthorizedException extends UpliftSocialException
 {
   protected $code = 401;
 
@@ -10,6 +10,6 @@ class UnauthorizedException extends ReClickdException
 
   public function __construct($message = null)
   {
-    $this->message = $message;
+    parent::__construct($message);
   }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace ReClickdAPI\Exceptions;
+namespace UpliftSocial\SDK\Exceptions;
 
-class InternalServerException extends ReClickdException
+class InternalServerException extends UpliftSocialException
 {
   protected $code = 502;
 
@@ -10,6 +10,6 @@ class InternalServerException extends ReClickdException
 
   public function __construct($message = null)
   {
-    $this->message = $message;
+    parent::__construct($message);
   }
 }

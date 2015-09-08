@@ -1,8 +1,8 @@
 <?php
 
-namespace ReClickdAPI\Exceptions;
+namespace UpliftSocial\SDK\Exceptions;
 
-class ReClickdException extends \Exception
+class UpliftSocialException extends \Exception
 {
   public function __construct($message = null, $code = null)
   {
