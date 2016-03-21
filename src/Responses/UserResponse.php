@@ -12,6 +12,13 @@ class UserResponse
   public $id;
 
   /**
+   * User's old integer identification (if applicable)
+   *
+   * @var int
+   */
+  public $idOld;
+
+  /**
    * User's full name
    *
    * @var string
@@ -53,6 +60,7 @@ class UserResponse
     if ($response && is_object($response))
     {
       $this->id = $response->id;
+      $this->idOld = $response->idOld;
       $this->fullName = $response->fullName;
       $this->email = $response->email;
       $this->status = $response->status;
@@ -65,6 +73,7 @@ class UserResponse
   {
     return [
       'id' => $this->id,
+      'idOld' => $this->idOld,
       'fullName' => $this->fullName,
       'email' => $this->email,
       'statuc' => $this->status,
@@ -80,6 +89,15 @@ class UserResponse
   public function getId()
   {
     return $this->id;
+  }
+
+  /**
+   * Get the old User ID
+   * @return int
+   */
+  public function getIdOld()
+  {
+    return $this->idOld;
   }
 
   /**

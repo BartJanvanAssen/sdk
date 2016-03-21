@@ -105,34 +105,6 @@ class Client
   }
 
   /**
-   * Lists all Users belonging to Uplift Social Partner
-   *
-   * Returns an array of User objects with User ID as key
-   *
-   * @param string|null $apiKey
-   *
-   * @throws \UpliftSocial\SDK\Exceptions\BadRequestException
-   * @throws \UpliftSocial\SDK\Exceptions\UnauthorizedException
-   * @throws \UpliftSocial\SDK\Exceptions\InternalServerException
-   * @throws \UpliftSocial\SDK\Exceptions\UpliftSocialException
-   * @throws \Exception
-   *
-   * @returns \UpliftSocial\SDK\Responses\UserResponse[]
-   */
-  public static function listUsers($apiKey = null)
-  {
-    $response = self::getResponse(self::METHOD_GET, self::ENDPOINT_USER, [], $apiKey);
-
-    $users = [];
-    foreach ($response as $user)
-    {
-      $users[$user->id] = new UserResponse($user);
-    }
-
-    return $users;
-  }
-
-  /**
    * Creates a User
    *
    * @param string $fullName
