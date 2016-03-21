@@ -10,6 +10,7 @@ use UpliftSocial\SDK\Exceptions\InternalServerException;
 use UpliftSocial\SDK\Exceptions\NotFoundException;
 use UpliftSocial\SDK\Exceptions\UpliftSocialException;
 use UpliftSocial\SDK\Exceptions\UnauthorizedException;
+use UpliftSocial\SDK\Responses\UpdateUserResponse;
 use UpliftSocial\SDK\Responses\UserResponse;
 
 /**
@@ -154,7 +155,7 @@ class Client
   {
     $response = self::getResponse(self::METHOD_PATCH, self::ENDPOINT_USER.$id, $params, $apiKey);
 
-    return new UserResponse($response);
+    return new UpdateUserResponse($response);
   }
 
   /**
