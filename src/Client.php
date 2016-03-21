@@ -2,7 +2,7 @@
 
 namespace UpliftSocial\SDK;
 
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Client as GuzzleClient;
 use UpliftSocial\SDK\Exceptions\BadRequestException;
@@ -273,9 +273,18 @@ class Client
         return $body->data;
       }
     }
-    catch (ClientException $e)
+    catch (BadResponseException $e)
     {
-      throw new InternalServerException($e->getMessage());
+      $message = sprintf(
+        "Uplift API: %s\nPath: %s\nMethod: %s\nResponse:\n%s\nRequest:\n%s",
+        $e->getResponse()->getStatusCode(),
+        $path,
+        $method,
+        $e->getResponse()->getBody(),
+        $params ? ('Body: ' . json_encode($params, JSON_PRETTY_PRINT) . '. ') : 'null'
+      );
+
+      throw new InternalServerException($message);
     }
 
     throw new \Exception('Error calling ' . $method . ' to: ' . $path);
